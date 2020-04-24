@@ -136,7 +136,7 @@ namespace Gallery3WinForm
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private async void btnClose_Click(object sender, EventArgs e)
         {
             if (isValid() == true)
                 try
@@ -144,11 +144,12 @@ namespace Gallery3WinForm
                     pushData();
                     if (txtName.Enabled)
                     {
-                        //_Artist.NewArtist();
-                        MessageBox.Show("Artist added!", "Success");
+                        MessageBox.Show(await ServiceClient.InsertArtistAsync(_Artist));
                         frmMain.Instance.UpdateDisplay();
                         txtName.Enabled = false;
                     }
+                    else
+                        MessageBox.Show(await ServiceClient.UpdateArtistAsync(_Artist));
                     Hide();
                 }
                 catch (Exception ex)
@@ -168,7 +169,7 @@ namespace Gallery3WinForm
             //    else
             //        return true;
             //else
-                return true;
+            return true;
         }
 
         private void rbByDate_CheckedChanged(object sender, EventArgs e)
