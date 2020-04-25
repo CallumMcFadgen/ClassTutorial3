@@ -13,9 +13,21 @@ namespace Gallery3SelfHost
         public string Speciality { get; set; }
         public string Phone { get; set; }
 
-        //public List<clsAllWork> WorksList { get; set; }
+        public List<clsAllWork> WorksList { get; set; }
     }
 
-
-
+    // WORKS DTO
+    public class clsAllWork
+    {
+        public char WorkType { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+        public decimal Value { get; set; }
+        public float? Width { get; set; }
+        public float? Height { get; set; }
+        public string Type { get; set; }
+        public float? Weight { get; set; }
+        public string Material { get; set; }
+        public string ArtistName { get; set; }
+    }
 }

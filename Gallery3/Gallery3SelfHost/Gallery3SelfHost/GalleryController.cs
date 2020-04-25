@@ -22,6 +22,25 @@ namespace Gallery3SelfHost
         }
 
 
+        // CONVERSIONS
+        private clsAllWork dataRow2AllWork(DataRow prDataRow)
+        {
+            return new clsAllWork()
+            {
+                WorkType = Convert.ToChar(prDataRow["WorkType"]),
+                Name = Convert.ToString(prDataRow["Name"]),
+                Date = Convert.ToDateTime(prDataRow["Date"]),
+                Value = Convert.ToDecimal(prDataRow["Value"]),
+                Width = prDataRow["Width"] is DBNull ? (float?)null : Convert.ToSingle(prDataRow["Width"]),
+                Height = prDataRow["Height"] is DBNull ? (float?)null : Convert.ToSingle(prDataRow["Height"]),
+                Type = Convert.ToString(prDataRow["Type"]),
+                Weight = prDataRow["Weight"] is DBNull ? (float?)null : Convert.ToSingle(prDataRow["Weight"]),
+                Material = Convert.ToString(prDataRow["Material"]),
+                ArtistName = Convert.ToString(prDataRow["ArtistName"])
+            };
+        }
+
+
         //GET API'S (retrive data)
         public List<string> GetArtistNames()
         {
@@ -45,10 +64,23 @@ namespace Gallery3SelfHost
                 {
                     Name = (string)lcResult.Rows[0]["Name"],
                     Speciality = (string)lcResult.Rows[0]["Speciality"],
-                    Phone = (string)lcResult.Rows[0]["Phone"]
+                    Phone = (string)lcResult.Rows[0]["Phone"],
+                    WorksList = getArtistWorks(Name)
                 };
             else
                 return null;
+        }
+
+        private List<clsAllWork> getArtistWorks(string prName)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>(1);
+            par.Add("Name", prName);
+            DataTable lcResult = clsDbConnection.GetDataTable("SELECT * FROM Work WHERE ArtistName = @Name", par);
+            List<clsAllWork> lcWorks = new List<clsAllWork>();
+
+            foreach (DataRow dr in lcResult.Rows)
+                lcWorks.Add(dataRow2AllWork(dr));
+            return lcWorks;
         }
 
 
@@ -60,6 +92,7 @@ namespace Gallery3SelfHost
                 int lcRecCount = clsDbConnection.Execute(
                 "UPDATE Artist SET Speciality = @Speciality, Phone = @Phone WHERE Name = @Name",
                 prepareArtistParameters(prArtist));
+
                 if (lcRecCount == 1)
                     return "One artist updated";
                 else
