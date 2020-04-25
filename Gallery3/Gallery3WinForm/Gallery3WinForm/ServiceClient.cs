@@ -44,9 +44,19 @@ namespace Gallery3WinForm
             return await InsertOrUpdateAsync(prArtist, "http://localhost:60064/api/gallery/PostArtist", "POST");
         }
 
+        internal async static Task<string> InsertWorkAsync(clsAllWork prWork)
+        {
+            return await InsertOrUpdateAsync(prWork, "http://localhost:60064/api/gallery/PostArtWork", "POST");
+        }
+
         internal async static Task<string> UpdateArtistAsync(clsArtist prArtist)
         {
             return await InsertOrUpdateAsync(prArtist, "http://localhost:60064/api/gallery/PutArtist", "PUT");
+        }
+
+        internal async static Task<string> UpdateWorkAsync(clsAllWork prWork)
+        {
+            return await InsertOrUpdateAsync(prWork, "http://localhost:60064/api/gallery/PutArtWork", "PUT");
         }
     }
 }

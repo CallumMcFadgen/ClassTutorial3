@@ -21,6 +21,21 @@ namespace Gallery3SelfHost
             return par;
         }
 
+        private Dictionary<string, object> prepareWorkParameters(clsAllWork prWork)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>(10);
+            par.Add("WorkType", prWork.WorkType);
+            par.Add("Name", prWork.Name);
+            par.Add("Date", prWork.Date);
+            par.Add("Value", prWork.Value);
+            par.Add("Width", prWork.Width);
+            par.Add("Height", prWork.Height);
+            par.Add("Type", prWork.Type);
+            par.Add("Weight", prWork.Weight);
+            par.Add("Material", prWork.Material);
+            par.Add("ArtistName", prWork.ArtistName);
+            return par;
+        }
 
         // CONVERSIONS
         private clsAllWork dataRow2AllWork(DataRow prDataRow)
@@ -39,7 +54,6 @@ namespace Gallery3SelfHost
                 ArtistName = Convert.ToString(prDataRow["ArtistName"])
             };
         }
-
 
         //GET API'S (retrive data)
         public List<string> GetArtistNames()
@@ -83,14 +97,16 @@ namespace Gallery3SelfHost
             return lcWorks;
         }
 
-
         //PUT API'S (update data)
         public string PutArtist(clsArtist prArtist)
         {
             try
             {
                 int lcRecCount = clsDbConnection.Execute(
-                "UPDATE Artist SET Speciality = @Speciality, Phone = @Phone WHERE Name = @Name",
+                "UPDATE Artist SET " +
+                "Speciality = @Speciality, " +
+                "Phone = @Phone " +
+                "WHERE Name = @Name",
                 prepareArtistParameters(prArtist));
 
                 if (lcRecCount == 1)
@@ -104,6 +120,27 @@ namespace Gallery3SelfHost
             }
         }
 
+        public string PutArtwork(clsAllWork prWork)
+        {
+            try
+            {
+                int lcRecCount = clsDbConnection.Execute(
+                    "UPDATE Work " +
+                    "SET WorkType = @WorkType, Name = @Name, Date = @Date, Value = @Value, Width = @Width, Height = @Height, " +
+                    "Type = @Type, Weight = @Weight, Material = @Material, ArtistName = @ArtistName " +
+                    "WHERE Name = @Name AND ArtistName = @ArtistName",
+                prepareWorkParameters(prWork));
+
+                if (lcRecCount == 1)
+                    return "One artwork updated";
+                else
+                    return "Unexpected artwork update count: " + lcRecCount;
+            }
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
+        }
 
         //POST API'S (insert data)
         public string PostArtist(clsArtist prArtist)
@@ -111,8 +148,12 @@ namespace Gallery3SelfHost
             try
             {
                 int lcRecCount = clsDbConnection.Execute(
-                "INSERT INTO Artist VALUES (@Name, @Speciality, @Phone)",
+                "INSERT INTO Artist VALUES (" +
+                "@Name, " +
+                "@Speciality, " +
+                "@Phone)",
                 prepareArtistParameters(prArtist)) ;
+
                 if (lcRecCount == 1)
                     return "One artist added";
                 else
@@ -124,9 +165,24 @@ namespace Gallery3SelfHost
             }
         }
 
+        public string PostArtWork(clsAllWork prWork)
+        {
+            try
+            {
+                int lcRecCount = clsDbConnection.Execute("INSERT INTO Work " +
+                "(WorkType, Name, Date, Value, Width, Height, Type, Weight, Material, ArtistName) " +
+                "VALUES (@WorkType, @Name, @Date, @Value, @Width, @Height, @Type, @Weight, @Material, @ArtistName)",
+                prepareWorkParameters(prWork));
 
-
-
-
+                if (lcRecCount == 1)
+                    return "One artwork inserted";
+                else
+                    return "Unexpected artwork insert count: " + lcRecCount;
+            }
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
+        }
     }
 }

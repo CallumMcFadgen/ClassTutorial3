@@ -13,8 +13,8 @@ namespace Gallery3WinForm
         public static Dictionary<char, Delegate> _WorksForm = new System.Collections.Generic.Dictionary<char, Delegate>
         {
             {'P', new LoadWorkFormDelegate(frmPainting.Run)},
-            {'H', null},
-            {'S', null}
+            {'H', new LoadWorkFormDelegate(frmPhotograph.Run)},
+            {'S', new LoadWorkFormDelegate(frmSculpture.Run)}
         };
 
         public frmWork()
@@ -34,11 +34,15 @@ namespace Gallery3WinForm
             ShowDialog();
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        private async void btnOK_Click(object sender, EventArgs e)
         {
             if (isValid())
             {
                 pushData();
+                if (txtName.Enabled)
+                    MessageBox.Show(await ServiceClient.InsertWorkAsync(_Work));
+                else
+                    MessageBox.Show(await ServiceClient.UpdateWorkAsync(_Work));
                 Close();
             }
         }
@@ -58,6 +62,7 @@ namespace Gallery3WinForm
             txtName.Text = _Work.Name;
             txtCreation.Text = _Work.Date.ToShortDateString();
             txtValue.Text = _Work.Value.ToString();
+            txtName.Enabled = string.IsNullOrEmpty(_Work.Name);
         }
 
         protected virtual void pushData()
