@@ -22,14 +22,6 @@ namespace Gallery3SelfHost
             return par;
         }
 
-        private Dictionary<string, object> prepareDeleteWorkParameters(string prWorkName, string prArtistName)
-        {
-            Dictionary<string, object> par = new Dictionary<string, object>(2);
-            par.Add("WorkName", prWorkName);
-            par.Add("ArtistName", prArtistName);
-            return par;
-        }
-
         private Dictionary<string, object> prepareWorkParameters(clsAllWork prWork)
         {
             Dictionary<string, object> par = new Dictionary<string, object>(10);
@@ -43,6 +35,21 @@ namespace Gallery3SelfHost
             par.Add("Weight", prWork.Weight);
             par.Add("Material", prWork.Material);
             par.Add("ArtistName", prWork.ArtistName);
+            return par;
+        }
+
+        private Dictionary<string, object> prepareDeleteWorkParameters(string prWorkName, string prArtistName)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>(2);
+            par.Add("WorkName", prWorkName);
+            par.Add("ArtistName", prArtistName);
+            return par;
+        }
+
+        private Dictionary<string, object> prepareDeleteArtistParameters(string prArtistName)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>(1);
+            par.Add("ArtistName", prArtistName);
             return par;
         }
 
@@ -217,6 +224,25 @@ namespace Gallery3SelfHost
                 int lcRecCount = clsDbConnection.Execute(
                     "DELETE FROM Work WHERE Name = @WorkName AND ArtistName = @ArtistName",
                     prepareDeleteWorkParameters(WorkName, ArtistName));
+
+                if (lcRecCount == 1)
+                    return "One artwork deleted";
+                else
+                    return "Unexpected artwork deletion count: " + lcRecCount;
+            }
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
+        }
+
+        public string DeleteArtist(string ArtistName)
+        {
+            try
+            {
+                int lcRecCount = clsDbConnection.Execute(
+                    "DELETE FROM Artist WHERE Name = @ArtistName",
+                    prepareDeleteArtistParameters(ArtistName));
 
                 if (lcRecCount == 1)
                     return "One artist deleted";
