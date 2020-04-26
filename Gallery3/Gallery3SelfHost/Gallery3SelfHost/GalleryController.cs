@@ -10,7 +10,8 @@ namespace Gallery3SelfHost
 {
     public class GalleryController : System.Web.Http.ApiController
     {
-        // PARAMS
+        #region PARAMETER CONFIGURATION
+
         private Dictionary<string, object> prepareArtistParameters(clsArtist prArtist)
 
         {
@@ -18,6 +19,14 @@ namespace Gallery3SelfHost
             par.Add("Name", prArtist.Name);
             par.Add("Speciality", prArtist.Speciality);
             par.Add("Phone", prArtist.Phone);
+            return par;
+        }
+
+        private Dictionary<string, object> prepareDeleteWorkParameters(string prWorkName, string prArtistName)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>(2);
+            par.Add("WorkName", prWorkName);
+            par.Add("ArtistName", prArtistName);
             return par;
         }
 
@@ -37,7 +46,10 @@ namespace Gallery3SelfHost
             return par;
         }
 
-        // CONVERSIONS
+        #endregion
+
+        #region DATA CONVERSION
+
         private clsAllWork dataRow2AllWork(DataRow prDataRow)
         {
             return new clsAllWork()
@@ -55,7 +67,10 @@ namespace Gallery3SelfHost
             };
         }
 
-        //GET API'S (retrive data)
+        #endregion
+
+        #region GET API'S
+
         public List<string> GetArtistNames()
         {
             DataTable lcResult = clsDbConnection.GetDataTable("SELECT Name FROM Artist", null);
@@ -97,7 +112,10 @@ namespace Gallery3SelfHost
             return lcWorks;
         }
 
-        //PUT API'S (update data)
+        #endregion
+
+        #region PUT API'S
+
         public string PutArtist(clsArtist prArtist)
         {
             try
@@ -142,7 +160,10 @@ namespace Gallery3SelfHost
             }
         }
 
-        //POST API'S (insert data)
+        #endregion
+
+        #region POST API'S
+
         public string PostArtist(clsArtist prArtist)
         {
             try
@@ -152,7 +173,7 @@ namespace Gallery3SelfHost
                 "@Name, " +
                 "@Speciality, " +
                 "@Phone)",
-                prepareArtistParameters(prArtist)) ;
+                prepareArtistParameters(prArtist));
 
                 if (lcRecCount == 1)
                     return "One artist added";
@@ -183,6 +204,31 @@ namespace Gallery3SelfHost
             {
                 return ex.GetBaseException().Message;
             }
+        } 
+
+        #endregion
+
+        #region DELETE API'S
+
+        public string DeleteArtwork(string WorkName, string ArtistName)
+        {
+            try
+            {
+                int lcRecCount = clsDbConnection.Execute(
+                    "DELETE FROM Work WHERE Name = @WorkName AND ArtistName = @ArtistName",
+                    prepareDeleteWorkParameters(WorkName, ArtistName));
+
+                if (lcRecCount == 1)
+                    return "One artist deleted";
+                else
+                    return "Unexpected artist deletion count: " + lcRecCount;
+            }
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
         }
+
+        #endregion
     }
 }

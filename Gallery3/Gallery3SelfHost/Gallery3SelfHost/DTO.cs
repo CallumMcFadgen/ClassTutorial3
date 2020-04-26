@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Gallery3SelfHost
 {
-    // ARTIST DTO
+    #region ARTIST DTO
+
     public class clsArtist
     {
         public string Name { get; set; }
@@ -16,7 +17,10 @@ namespace Gallery3SelfHost
         public List<clsAllWork> WorksList { get; set; }
     }
 
-    // WORKS DTO
+    #endregion
+
+    #region WORKS DTO
+ 
     public class clsAllWork
     {
         public char WorkType { get; set; }
@@ -29,5 +33,6 @@ namespace Gallery3SelfHost
         public float? Weight { get; set; }
         public string Material { get; set; }
         public string ArtistName { get; set; }
-    }
+    } 
+    #endregion
 }

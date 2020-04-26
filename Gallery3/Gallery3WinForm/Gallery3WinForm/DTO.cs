@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Gallery3WinForm
 {
-    // ARTIST DTO
+    #region ARTIST DTO
+
     public class clsArtist
     {
         public string Name { get; set; }
@@ -16,7 +17,10 @@ namespace Gallery3WinForm
         public List<clsAllWork> WorksList { get; set; }
     }
 
-    // WORKS DTO
+    #endregion
+
+    #region WORKS DTO
+  
     public class clsAllWork
     {
         public char WorkType { get; set; }
@@ -30,10 +34,22 @@ namespace Gallery3WinForm
         public string Material { get; set; }
         public string ArtistName { get; set; }
 
-        // FORMAT DATA FOR ARTIST FORM
+   
+        // ARTIST FORM DATA FORMATING
         public override string ToString()
         {
             return Name + "\t" + Date.ToShortDateString();
+        } 
+
+        // FACTORY PROMPT
+        public static readonly string FACTORY_PROMPT = "Enter P for Painting, S for Sculpture and H for Photograph";
+
+        // FACTORY METHOD
+        public static clsAllWork NewWork(char prChoice)
+        {
+            return new clsAllWork() { WorkType = Char.ToUpper(prChoice) };
         }
     }
+
+    #endregion
 }
